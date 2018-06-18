@@ -1,6 +1,7 @@
 #include "hwlib.hpp"
 #include "HC595.hpp"
 #include "2088rgb_5.hpp"
+#include "led.hpp"
 
 int main(){
 	
@@ -28,12 +29,8 @@ int main(){
 	
 	rgb2088_5 matrix = rgb2088_5(anodeController, dummyController, dummyController, blueController);
 	
-	while(true){
-		for(int x = 0; x<4; x++){
-			for(int y = 0; y<4; y++){
-				matrix.setLed(2, x, y);
-				hwlib::wait_ms(1000);
-			}
-		}
-	}
+	const int numberOfLeds = 5;
+	led ledsToLight[numberOfLeds] = {led(2, 0, 7), led(2, 2, 7), led(2, 4, 7), led(2, 6, 7), led(2, 7, 7)};
+	
+	matrix.setRow(ledsToLight, numberOfLeds, 7, 2);
 }

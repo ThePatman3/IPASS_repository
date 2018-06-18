@@ -12,15 +12,26 @@ hc595::hc595(hwlib::pin_out & _SI, hwlib::pin_out & _SCK, hwlib::pin_out & _RCK,
 	clear();
 }
 
-void hc595::writeData(uint_fast8_t data){
+void hc595::writeData(uint_fast8_t data, bool direction){ // when direction == true, the lsb will be placed at Qh and the msb will be placed at Qa.
 	bool bit = 0;
-	for(int i = 0; i < 8; i++){
-		bit = (data >> i) & 1;
-		SI.set(bit);
-		hwlib::wait_ms(waitTime_ms);
-		SCK.set(true);
-		hwlib::wait_ms(waitTime_ms);
-		SCK.set(false);
+	if(direction){
+		for(int i = 0; i < 8; i++){
+			bit = (data >> i) & 1;
+			SI.set(bit);
+			hwlib::wait_ms(waitTime_ms);
+			SCK.set(true);
+			hwlib::wait_ms(waitTime_ms);
+			SCK.set(false);
+		}
+	}else{
+		for(int i = 7; i >= 0; i--){
+			bit = (data >> i) & 1;
+			SI.set(bit);
+			hwlib::wait_ms(waitTime_ms);
+			SCK.set(true);
+			hwlib::wait_ms(waitTime_ms);
+			SCK.set(false);
+		}
 	}
 	RCK.set(true);
 	hwlib::wait_ms(waitTime_ms);
