@@ -50,7 +50,7 @@ void rgb2088_5::setLed(led Led){
 	anodeController.writeData(powTwo[Led.positionY], false);
 }
 
-void rgb2088_5::setRow(const led leds[], int numberOfLeds, int row, int color){
+void rgb2088_5::setRow(const led leds[], int numberOfLeds, int row, int color, bool checkLedIsOn){
 	if(!(numberOfLeds > 0)){
 		return;
 	}
@@ -61,8 +61,21 @@ void rgb2088_5::setRow(const led leds[], int numberOfLeds, int row, int color){
 		color = leds[0].color;
 	}
 	int shiftData = 0;
-	for(int i = 0; i < numberOfLeds; i++){
-		shiftData += powTwo[leds[i].positionX];
+	if(checkLedIsOn){
+		int n = 0;
+		for(int i=0; i<8; i++){
+			if(leds[i].isOn){
+				shiftData += powTwo[leds[i].positionX];
+				n++;
+				if(n>=numberOfLeds){
+					break;
+				}
+			}
+		}
+	}else{
+		for(int i = 0; i < numberOfLeds; i++){
+			shiftData += powTwo[leds[i].positionX];
+		}
 	}
 	anodeController.clear();
 	ledControllers[color] -> writeData(~shiftData, false);
@@ -70,17 +83,19 @@ void rgb2088_5::setRow(const led leds[], int numberOfLeds, int row, int color){
 }
 
 void rgb2088_5::setLedValue(int color, int x, int y, bool value){
-	if(matrixLayout[color][x][y].isOn != value){
-		matrixLayout[color][x][y].isOn = value;
-		numberOfLedsOn[color][y] = (value)? numberOfLedsOn[color][y] + 1 : numberOfLedsOn[color][y] - 1;
+	if(matrixLayout[color][y][x].isOn != value){
+		matrixLayout[color][y][x].isOn = value;
+		(value)? numberOfLedsOn[color][y] += 1 : numberOfLedsOn[color][y] -= 1;
 	}
 }
 
-void rgb2088_5::lightMatrix(int waitTime_ns){
+void rgb2088_5::lightMatrix(int_fast32_t waitTime_ns){
 	for(int col = 0; col < 3; col++){
 		for(int Y=0; Y<8; Y++){
-			setRow(matrixLayout[col][Y], numberOfLedsOn[col][Y], Y, col);
-			hwlib::wait_ns(waitTime_ns);
+			setRow(matrixLayout[col][Y], numberOfLedsOn[col][Y], Y, col, true);
+			if(numberOfLedsOn[col][Y] > 0){
+				hwlib::wait_ms(waitTime_ns);
+			}
 		}
 	}
 }

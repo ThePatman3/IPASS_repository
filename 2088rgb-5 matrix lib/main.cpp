@@ -28,9 +28,19 @@ int main(){
 	hc595 dummyController = hc595(hwlib::pin_out_dummy, hwlib::pin_out_dummy, hwlib::pin_out_dummy, hwlib::pin_out_dummy);
 	
 	rgb2088_5 matrix = rgb2088_5(anodeController, dummyController, dummyController, blueController);
+
+	for(int y = 0; y<8; y++){
+		for(int x=0; x<8; x+=2){
+			matrix.setLedValue(2, x, y, true);
+		}
+	}
 	
-	const int numberOfLeds = 5;
-	led ledsToLight[numberOfLeds] = {led(2, 0, 7), led(2, 2, 7), led(2, 4, 7), led(2, 6, 7), led(2, 7, 7)};
+	int N = 0;
+	int_fast32_t time = 1000;
+	while(N < 3){
+		matrix.lightMatrix(time);
+		N++;
+	}
 	
-	matrix.setRow(ledsToLight, numberOfLeds, 7, 2);
+	
 }

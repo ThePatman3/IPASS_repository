@@ -6,7 +6,7 @@
 
 class matrix_layout{
 private:
-	led matrix[8,8];
+	led matrixLayout[8,8];
 	int numberOfLedsOn[8];
 public:
 	matrix_layout(int color){
