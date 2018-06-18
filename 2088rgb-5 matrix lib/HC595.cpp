@@ -2,7 +2,7 @@
 #include "HC595.hpp"
 
 hc595::hc595(hwlib::pin_out & _SI, hwlib::pin_out & _SCK, hwlib::pin_out & _RCK, hwlib::pin_out & _SCLR, hwlib::pin_out & _G):
-	SI(_SI), SCK(_SCK), RCK(_RCK), SCLR(_SCLR), G(_G), waitTime_ms(1), currentData(0)
+	SI(_SI), SCK(_SCK), RCK(_RCK), SCLR(_SCLR), G(_G), waitTime_us(1), currentData(0)
 	{
 	SI.set(false);
 	SCK.set(false);
@@ -18,23 +18,23 @@ void hc595::writeData(uint_fast8_t data, bool direction){ // when direction == t
 		for(int i = 0; i < 8; i++){
 			bit = (data >> i) & 1;
 			SI.set(bit);
-			hwlib::wait_ms(waitTime_ms);
+			hwlib::wait_us(waitTime_us);
 			SCK.set(true);
-			hwlib::wait_ms(waitTime_ms);
+			hwlib::wait_us(waitTime_us);
 			SCK.set(false);
 		}
 	}else{
 		for(int i = 7; i >= 0; i--){
 			bit = (data >> i) & 1;
 			SI.set(bit);
-			hwlib::wait_ms(waitTime_ms);
+			hwlib::wait_us(waitTime_us);
 			SCK.set(true);
-			hwlib::wait_ms(waitTime_ms);
+			hwlib::wait_us(waitTime_us);
 			SCK.set(false);
 		}
 	}
 	RCK.set(true);
-	hwlib::wait_ms(waitTime_ms);
+	hwlib::wait_us(waitTime_us);
 	RCK.set(false);
 	SI.set(false);
 	currentData = data;
@@ -42,12 +42,12 @@ void hc595::writeData(uint_fast8_t data, bool direction){ // when direction == t
 
 void hc595::shiftData(bool bit){
 	SI.set(bit);
-	hwlib::wait_ms(waitTime_ms);
+	hwlib::wait_us(waitTime_us);
 	SCK.set(true);
-	hwlib::wait_ms(waitTime_ms);
+	hwlib::wait_us(waitTime_us);
 	SCK.set(false);
 	RCK.set(true);
-	hwlib::wait_ms(waitTime_ms);
+	hwlib::wait_us(waitTime_us);
 	RCK.set(false);
 	SI.set(false);
 	currentData = (currentData >> 1) & ~(1 << 7);
@@ -56,9 +56,9 @@ void hc595::shiftData(bool bit){
 
 void hc595::clear(){
 	SCLR.set(false);
-	hwlib::wait_ms(waitTime_ms);
+	hwlib::wait_us(waitTime_us);
 	RCK.set(true);
-	hwlib::wait_ms(waitTime_ms);
+	hwlib::wait_us(waitTime_us);
 	SCLR.set(true);
 	RCK.set(false);
 	currentData = 0;

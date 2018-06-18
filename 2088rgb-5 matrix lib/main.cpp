@@ -24,23 +24,37 @@ int main(){
 	
 	hc595 blueController = hc595(blue_si, blue_sck, rck, blue_sclr);
 	
+	// greenController setup
+	hwlib::target::pin_out green_si = hwlib::target::pin_out(0, 15); // D24
+	hwlib::target::pin_out green_sck = hwlib::target::pin_out(3, 1); // D26
+	hwlib::target::pin_out green_sclr = hwlib::target::pin_out(1, 26); // D22
+	
+	hc595 greenController = hc595(green_si, green_sck, rck, green_sclr);
+	
 	// dummy hc595 setup for unused led colors
 	hc595 dummyController = hc595(hwlib::pin_out_dummy, hwlib::pin_out_dummy, hwlib::pin_out_dummy, hwlib::pin_out_dummy);
 	
-	rgb2088_5 matrix = rgb2088_5(anodeController, dummyController, dummyController, blueController);
+	rgb2088_5 matrix = rgb2088_5(anodeController, dummyController, greenController, blueController);
 
-	for(int y = 0; y<8; y++){
-		for(int x=0; x<8; x+=2){
+	for(int y = 6; y<8; y++){
+		for(int x=1; x<7; x++){
 			matrix.setLedValue(2, x, y, true);
 		}
 	}
 	
-	int N = 0;
-	int_fast32_t time = 1000;
-	while(N < 3){
-		matrix.lightMatrix(time);
-		N++;
+	for(int y = 0; y<6; y++){
+		for(int x=3; x<5; x++){
+			matrix.setLedValue(2, x, y, true);
+		}
 	}
 	
+	matrix.setLedValue(1, 1, 1, true);
+	
+	int N = 0;
+	int_fast32_t time_ns = 700000;
+	while(N < 1000){
+		matrix.lightMatrix(time_ns);
+		N++;
+	}
 	
 }

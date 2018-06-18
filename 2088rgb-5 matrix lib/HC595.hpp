@@ -10,12 +10,12 @@ private:
 	hwlib::pin_out & RCK;
 	hwlib::pin_out & SCLR;
 	hwlib::pin_out & G;
-	int waitTime_ms;
+	int waitTime_us;
 	uint_fast8_t currentData;
 	
 public:
 	hc595(hwlib::pin_out & _SI, hwlib::pin_out & _SCK, hwlib::pin_out & _RCK, hwlib::pin_out & _SCLR = hwlib::pin_out_dummy, hwlib::pin_out & _G = hwlib::pin_out_dummy);
-	void writeData(uint_fast8_t data, bool direction); // when direction == true, the lsb will be placed at Qh and the msb will be placed at Qa.
+	void writeData(uint_fast8_t data, bool direction = false); // when direction == true, the lsb will be placed at Qh and the msb will be placed at Qa.
 	void shiftData(bool bit = 0);
 	void clear();
 	void enableOutput(bool enable);

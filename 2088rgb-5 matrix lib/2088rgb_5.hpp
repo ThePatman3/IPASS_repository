@@ -37,7 +37,7 @@ public:
 	
 	// public methods:
 	void setLedValue(int color, int x, int y, bool value);
-	void lightMatrix(int waitTime_ns);
+	void lightMatrix(int waitTime_ns); // Successfully tested with a 2000000ns waitTime
 };
 
 #endif
