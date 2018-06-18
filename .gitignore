@@ -1,0 +1,15 @@
+html/
+*.due
+*.native
+*.shared
+*.bat
+*.project
+*codelite/
+*.o
+*.c
+*.bin
+*.elf
+*.ld
+*.map
+*.workspace
+makefile
