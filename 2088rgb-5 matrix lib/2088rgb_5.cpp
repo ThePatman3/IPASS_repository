@@ -107,3 +107,11 @@ void rgb2088_5::lightMatrix(int_fast32_t waitTime_ns){
 		}
 	}
 }
+
+int rgb2088_5::getSizeX(){
+	return 8;
+}
+
+int rgb2088_5::getSizeY(){
+	return 8;
+}

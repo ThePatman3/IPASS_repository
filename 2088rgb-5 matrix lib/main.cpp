@@ -2,6 +2,7 @@
 #include "HC595.hpp"
 #include "2088rgb_5.hpp"
 #include "led.hpp"
+#include "lightningMaze.hpp"
 
 int main(){
 	
@@ -49,6 +50,7 @@ int main(){
 	}
 	
 	matrix.setLedValue(1, 6, 1, true);
+	matrix.setLedValue(1, 3, 7, true);
 	
 	int N = 0;
 	int_fast32_t time_ns = 700000;
