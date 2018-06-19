@@ -3,6 +3,7 @@
 #include "2088rgb_5.hpp"
 #include "led.hpp"
 #include "lightningMaze.hpp"
+#include "mazeCoordinate.hpp"
 
 int main(){
 	
@@ -36,7 +37,7 @@ int main(){
 	hc595 dummyController = hc595(hwlib::pin_out_dummy, hwlib::pin_out_dummy, hwlib::pin_out_dummy, hwlib::pin_out_dummy);
 	
 	rgb2088_5 matrix = rgb2088_5(anodeController, dummyController, greenController, blueController);
-
+/*
 	for(int y = 6; y<8; y++){
 		for(int x=1; x<7; x++){
 			matrix.setLedValue(2, x, y, true);
@@ -58,5 +59,10 @@ int main(){
 		matrix.lightMatrix(time_ns);
 		N++;
 	}
+	*/
+	
+	lightningMaze<8,8> myGame = lightningMaze<8,8>(matrix);
+	myGame.generateWalls();
+	myGame.start();
 	
 }

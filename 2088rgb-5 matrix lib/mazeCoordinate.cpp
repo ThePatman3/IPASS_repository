@@ -2,7 +2,7 @@
 #include "2088rgb_5.hpp"
 #include "led.hpp"
 
-#include "lightningMaze.hpp"
+#include "mazeCoordinate.hpp"
 
 void mazeCoordinate::updateCoordinate(int _x, int _y, bool _isWall){
 	x = _x;
