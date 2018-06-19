@@ -46,6 +46,19 @@ public:
 			doorWay--;
 		}
 	}
+	
+	void start(){
+		for(int x=0; x<sizeX; x++){
+			for(int y=0; y<sizeY; y++){
+				matrix.setLedValue(2, x, y, walls[x][y].isWall);
+			}
+		}
+		int iterations = 0;
+		while(iterations < 1000){
+			matrix.lightMatrix(700000);
+			iterations++;
+		}
+	}
 };
 
 #endif
