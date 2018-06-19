@@ -48,11 +48,11 @@ int main(){
 		}
 	}
 	
-	matrix.setLedValue(1, 1, 1, true);
+	matrix.setLedValue(1, 6, 1, true);
 	
 	int N = 0;
 	int_fast32_t time_ns = 700000;
-	while(N < 1000){
+	while(N < 5000){
 		matrix.lightMatrix(time_ns);
 		N++;
 	}

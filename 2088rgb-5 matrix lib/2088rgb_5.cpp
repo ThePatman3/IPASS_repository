@@ -91,14 +91,19 @@ void rgb2088_5::setLedValue(int color, int x, int y, bool value){
 
 void rgb2088_5::lightMatrix(int_fast32_t waitTime_ns){
 	int waitTime_us = waitTime_ns/1000;
-	for(int col = 0; col < 3; col++){
-		for(int Y=0; Y<8; Y++){
+	bool wait = false;
+	for(int Y=0; Y<8; Y++){
+		wait = false;
+		for(int col = 0; col < 3; col++){
 			setRow(matrixLayout[col][Y], numberOfLedsOn[col][Y], Y, col, true);
 			if(numberOfLedsOn[col][Y] > 0){
-				hwlib::wait_us(waitTime_us);
+				wait = true;
 			}else{
 				ledControllers[col] -> writeData(~0);
 			}
+		}
+		if(wait){
+			hwlib::wait_us(waitTime_us);
 		}
 	}
 }
