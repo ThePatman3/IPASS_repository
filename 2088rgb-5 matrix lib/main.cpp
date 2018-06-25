@@ -4,6 +4,8 @@
 #include "led.hpp"
 #include "lightningMaze.hpp"
 #include "mazeCoordinate.hpp"
+#include "adc_pins.hpp"
+#include "joyStick.hpp"
 
 int main(){
 	
@@ -37,32 +39,22 @@ int main(){
 	hc595 dummyController = hc595(hwlib::pin_out_dummy, hwlib::pin_out_dummy, hwlib::pin_out_dummy, hwlib::pin_out_dummy);
 	
 	rgb2088_5 matrix = rgb2088_5(anodeController, dummyController, greenController, blueController);
-/*
-	for(int y = 6; y<8; y++){
-		for(int x=1; x<7; x++){
-			matrix.setLedValue(2, x, y, true);
-		}
-	}
+
+	// joyStick setup
+	hwlib::target::pin_adc adcPin0(hwlib::target::ad_pins::a0);
+	hwlib::target::pin_adc adcPin1(hwlib::target::ad_pins::a1);
+	joyStick playerInput(adcPin1, adcPin0);
 	
-	for(int y = 0; y<6; y++){
-		for(int x=3; x<5; x++){
-			matrix.setLedValue(2, x, y, true);
-		}
-	}
+	hwlib::target::pin_out ledXPlus = hwlib::target::pin_out(2, 12); // D51
+	hwlib::target::pin_out ledXMin = hwlib::target::pin_out(1, 21); // D52
+	hwlib::target::pin_out ledYPlus = hwlib::target::pin_out(2, 13); // D50
+	hwlib::target::pin_out ledYMin = hwlib::target::pin_out(2, 14); // D49
 	
-	matrix.setLedValue(1, 6, 1, true);
-	matrix.setLedValue(1, 3, 7, true);
 	
-	int N = 0;
-	int_fast32_t time_ns = 700000;
-	while(N < 5000){
-		matrix.lightMatrix(time_ns);
-		N++;
-	}
-	*/
-	
+	/*
+	// maze test
 	lightningMaze<8,8> myGame = lightningMaze<8,8>(matrix);
 	myGame.generateWalls();
 	myGame.start();
-	
+	*/
 }
