@@ -45,16 +45,10 @@ int main(){
 	hwlib::target::pin_adc adcPin1(hwlib::target::ad_pins::a1);
 	joyStick playerInput(adcPin1, adcPin0);
 	
-	hwlib::target::pin_out ledXPlus = hwlib::target::pin_out(2, 12); // D51
-	hwlib::target::pin_out ledXMin = hwlib::target::pin_out(1, 21); // D52
-	hwlib::target::pin_out ledYPlus = hwlib::target::pin_out(2, 13); // D50
-	hwlib::target::pin_out ledYMin = hwlib::target::pin_out(2, 14); // D49
 	
-	
-	/*
 	// maze test
-	lightningMaze<8,8> myGame = lightningMaze<8,8>(matrix);
+	lightningMaze<8,8> myGame = lightningMaze<8,8>(matrix, playerInput);
 	myGame.generateWalls();
 	myGame.start();
-	*/
+	
 }
