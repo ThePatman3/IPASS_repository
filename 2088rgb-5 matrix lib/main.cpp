@@ -47,7 +47,7 @@ int main(){
 	
 	
 	// maze test
-	lightningMaze<8,8> myGame = lightningMaze<8,8>(matrix, playerInput);
+	lightningMaze<16,8> myGame = lightningMaze<16,8>(matrix, playerInput);
 	myGame.generateWalls();
 	myGame.start();
 	
