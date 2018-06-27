@@ -71,7 +71,7 @@ public:
 		exitCoordinate.y = sizeY-2;
 		bool foundNewCoordinate = false;
 		int iterationsCheck = 0;
-		while(amountUndefined > 0 && iterationsCheck < (sizeX-1) * (sizeY-1)){ // needs cleanup!
+		while(amountUndefined > 0){ // needs cleanup!
 			iterationsCheck++;
 			if(iterationsCheck > (sizeX-1) * (sizeY-1)){
 				break;
@@ -107,8 +107,8 @@ public:
 				if(neighbours[neighbourIndex].x == exitCoordinate.x && neighbours[neighbourIndex].y == exitCoordinate.y){
 					setWall(neighbours[neighbourIndex].x, neighbours[neighbourIndex].y, false);
 					amountUndefined--;
-					currentCoordinate = neighbours[neighbourIndex];
-					deadEnd = false;
+					//currentCoordinate = neighbours[neighbourIndex];
+					//deadEnd = false;
 					neighbourIndex = (neighbourIndex + 1) % 4;
 					continue;
 				}
@@ -130,19 +130,36 @@ public:
 			if(deadEnd){
 				for(int x=1; x<=sizeX-2; x++){
 					for(int y=1; y<=sizeY-2; y++){
-						if(walls[x][y].isUndefined){
+						if(walls[x][y].isWall){
 							if(y+1 < sizeY-2){
-								currentCoordinate = walls[x][y+1];
+								if(walls[x][y+1].isUndefined){
+									currentCoordinate = walls[x][y];
+									setWall(currentCoordinate.x, currentCoordinate.y, false);
+									foundNewCoordinate = true;
+									break;
+								}
 							}else if(x+1 < sizeX-2){
-								currentCoordinate = walls[x+1][y];
+								if(walls[x+1][y].isUndefined){
+									currentCoordinate = walls[x][y];
+									setWall(currentCoordinate.x, currentCoordinate.y, false);
+									foundNewCoordinate = true;
+									break;
+								}
 							}else if(y-1 > 0){
-								currentCoordinate = walls[x][y-1];
+								if(walls[x][y-1].isUndefined){
+									currentCoordinate = walls[x][y];
+									setWall(currentCoordinate.x, currentCoordinate.y, false);
+									foundNewCoordinate = true;
+									break;
+								}
 							}else if(x-1 > 0){
-								currentCoordinate = walls[x-1][y];
+								if(walls[x-1][y].isUndefined){
+									currentCoordinate = walls[x][y];
+									setWall(currentCoordinate.x, currentCoordinate.y, false);
+									foundNewCoordinate = true;
+									break;
+								}
 							}
-							setWall(currentCoordinate.x, currentCoordinate.y, false);
-							foundNewCoordinate = true;
-							break;
 						}
 					}
 					if(foundNewCoordinate){
