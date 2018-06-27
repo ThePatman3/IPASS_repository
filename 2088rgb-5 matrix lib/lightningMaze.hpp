@@ -24,14 +24,31 @@ public:
 	lightningMaze(rgb2088_5 _matrix, joyStick _playerInput): matrix(_matrix), playerInput(_playerInput), playerCoordinate(1,1,false), originX(0), originY(0), exitOriginX(0), exitOriginY(0){
 		for(int x = 0; x<sizeX; x++){
 			for(int y = 0; y<sizeY; y++){
+				//walls[x][y].x = x;
+				//walls[x][y].y = y;
+				//walls[x][y].isWall = false;
 				walls[x][y].updateCoordinate(x,y,false);
 			}
 		}
-		
+		for(int indexX = 1; indexX <= sizeX-2; indexX++){
+			for(int indexY = 1; indexY <= sizeX-2; indexY++){
+				if(indexX == 1 && indexY == 1){
+					continue;
+				}
+				walls[indexX][indexY].isUndefined = true;
+			}
+		}
 	}
 	
 	void setWall(int x, int y, bool wall){
 		walls[x][y].updateIsWall(wall);
+	}
+	
+	int kindOfRandomNumber(int max){
+		int firstNumber = playerInput.getXRaw();
+		int secondNumber = playerInput.getYRaw();
+		firstNumber ^= secondNumber;
+		return firstNumber % (max+1);
 	}
 	
 	void generateWalls(){
@@ -43,19 +60,103 @@ public:
 			setWall(0,borderY,true);
 			setWall(sizeX-1,borderY,true);
 		}
-		int doorWay = 6;
-		for(int x=2; x<sizeX; x+=2){
-			for(int y=0; y<sizeY; y++){
-				if(y==doorWay){
+		
+		
+		mazeCoordinate neighbours[4];
+		int amountUndefined = (sizeX-2) * (sizeY-2) - 1;
+		bool deadEnd = true;
+		mazeCoordinate currentCoordinate = playerCoordinate;
+		walls[currentCoordinate.x][currentCoordinate.y] = currentCoordinate;
+		exitCoordinate.x = sizeX-2;
+		exitCoordinate.y = sizeY-2;
+		bool foundNewCoordinate = false;
+		int iterationsCheck = 0;
+		while(amountUndefined > 0 && iterationsCheck < (sizeX-1) * (sizeY-1)){ // needs cleanup!
+			iterationsCheck++;
+			if(iterationsCheck > (sizeX-1) * (sizeY-1)){
+				break;
+			}
+			foundNewCoordinate = false;
+			deadEnd = true;
+			if(currentCoordinate.y + 1 <= sizeY -2){
+				neighbours[0] = walls[currentCoordinate.x][currentCoordinate.y+1]; // top neighbour
+			}else{
+				neighbours[0] = walls[playerCoordinate.x][playerCoordinate.y];
+			}
+			if(currentCoordinate.x + 1 <= sizeX -2){
+				neighbours[1] = walls[currentCoordinate.x + 1][currentCoordinate.y]; // right neighbour
+			}else{
+				neighbours[1] = walls[playerCoordinate.x][playerCoordinate.y];
+			}
+			if(currentCoordinate.y - 1 > 0){
+				neighbours[2] = walls[currentCoordinate.x][currentCoordinate.y-1]; // bottom neighbour
+			}else{
+				neighbours[2] = walls[playerCoordinate.x][playerCoordinate.y];
+			}
+			if(currentCoordinate.x - 1 > 0){
+				neighbours[3] = walls[currentCoordinate.x-1][currentCoordinate.y]; // left neighbour
+			}else{
+				neighbours[3] = walls[playerCoordinate.x][playerCoordinate.y];
+			}
+			int neighbourIndex = kindOfRandomNumber(3);
+			for(int i = 0; i<4; i++){
+				if(!neighbours[neighbourIndex].isUndefined){
+					neighbourIndex = (neighbourIndex + 1) % 4;
 					continue;
 				}
-				setWall(x, y, true);
+				if(neighbours[neighbourIndex].x == exitCoordinate.x && neighbours[neighbourIndex].y == exitCoordinate.y){
+					setWall(neighbours[neighbourIndex].x, neighbours[neighbourIndex].y, false);
+					amountUndefined--;
+					currentCoordinate = neighbours[neighbourIndex];
+					deadEnd = false;
+					neighbourIndex = (neighbourIndex + 1) % 4;
+					continue;
+				}
+				if(!deadEnd){
+					setWall(neighbours[neighbourIndex].x, neighbours[neighbourIndex].y, true);
+					amountUndefined--;
+					neighbourIndex = (neighbourIndex + 1) % 4;
+					continue;
+				}else{
+					setWall(neighbours[neighbourIndex].x, neighbours[neighbourIndex].y, false);
+					amountUndefined--;
+					currentCoordinate = neighbours[neighbourIndex];
+					deadEnd = false;
+					neighbourIndex = (neighbourIndex + 1) % 4;
+					continue;
+				}
 			}
-			doorWay = (doorWay-2 >= 1)? doorWay - 2 : doorWay;
+			
+			if(deadEnd){
+				for(int x=1; x<=sizeX-2; x++){
+					for(int y=1; y<=sizeY-2; y++){
+						if(walls[x][y].isUndefined){
+							if(y+1 < sizeY-2){
+								currentCoordinate = walls[x][y+1];
+							}else if(x+1 < sizeX-2){
+								currentCoordinate = walls[x+1][y];
+							}else if(y-1 > 0){
+								currentCoordinate = walls[x][y-1];
+							}else if(x-1 > 0){
+								currentCoordinate = walls[x-1][y];
+							}
+							setWall(currentCoordinate.x, currentCoordinate.y, false);
+							foundNewCoordinate = true;
+							break;
+						}
+					}
+					if(foundNewCoordinate){
+						break;
+					}
+				}
+				if(!foundNewCoordinate){
+					return;
+				}
+			}
 		}
 		
 		setWall(sizeX-1,2,false);
-		exitCoordinate.updateCoordinate(sizeX-1,2,false);
+		
 	}
 	
 	// heading: 0 = 0, 1 = Y+, 2 = X+, 3 = Y-, 4 = X-

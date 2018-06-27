@@ -12,6 +12,8 @@ public:
 		pinX(_pinX), pinY(_pinY) {}
 	int getX();
 	int getY();
+	int getXRaw();
+	int getYRaw();
 };
 
 #endif

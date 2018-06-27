@@ -32,3 +32,11 @@ int joyStick::getY(){
 	}
 	return 0;
 }
+
+int joyStick::getXRaw(){
+	return static_cast<int>(pinX.get());
+}
+
+int joyStick::getYRaw(){
+	return static_cast<int>(pinY.get());
+}
