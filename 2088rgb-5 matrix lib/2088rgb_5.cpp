@@ -3,42 +3,6 @@
 #include "led.hpp"
 
 #include "2088rgb_5.hpp"
-/*
-class rgb2088_5{
-private:
-	hc595 & anodeController;
-	hc595 *ledControllers[3];
-	uint_fast8_t powTwo[8];
-	led matrixLayout[3,8,8];
-	int numberOfLedsOn[3,8];
-	
-public:
-	rgb2088_5(hc595 &_anodeController, hc595 &redController, hc595 &greenController, hc595 &blueController):
-		anodeController(_anodeController),
-		ledControllers{&redController, &greenController, &blueController},
-		powTwo{1, 2, 4, 8, 16, 32, 64, 128} {
-			for(int color = 0; color < 3; color++){
-				for(int y = 0; y < 8; y++){
-					numberOfLedsOn[color,y] = 0;
-					for(int x = 0; x<8; x++){
-						matrixLayout[color,x,y].color = color;
-						matrixLayout[color,x,y].positionX = x;
-						matrixLayout[color,x,y].positionY = y;
-					}
-				}
-			}
-		}
-	
-	// to become private methods:
-	void setLed(int color, int x, int y); // color: 0 = red; 1 = green; 2 = blue
-	void setLed(led Led);
-	void setRow(const led leds[], int numberOfLeds, int row = -1, int color = -1);
-	
-	// public methods:
-	void setLedValue(int color, int x, int y, bool value);
-	void lightMatrix();
-};
-*/
 
 void rgb2088_5::setLed(int color, int x, int y){
 	ledControllers[color] -> writeData(~powTwo[x], false);

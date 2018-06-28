@@ -6,11 +6,21 @@
 #include "led.hpp"
 #include "mazeCoordinate.hpp"
 #include "joyStick.hpp"
+#include "ILedMatrix.hpp"
 
+/// @file
+
+/// \brief
+/// lightningMaze Game
+/// \details
+/// lightningMaze is a game that uses a rgb2088_5 led matrix as display and
+/// a joyStick for player input. The template parameters sizeX and sizeY determine the size of the maze.
+/// After constructing a lightningMaze class the function generateWalls() has to be called.
+/// When the function start() is called the lightingMaze will start its main loop, this loop is broken when the player has won.
 template<int sizeX, int sizeY>
 class lightningMaze{
 private:
-	rgb2088_5 matrix;
+	ILedMatrix & matrix;
 	mazeCoordinate walls[sizeX][sizeY];
 	joyStick & playerInput;
 	mazeCoordinate playerCoordinate;
@@ -19,9 +29,103 @@ private:
 	int originY;
 	int exitOriginX;
 	int exitOriginY;
-	// bool winText[8][30];
+	
+	void setWall(int x, int y, bool wall){
+		walls[x][y].updateIsWall(wall);
+	}
+	
+	int kindOfRandomNumber(int max){
+		int firstNumber = playerInput.getXRaw();
+		int secondNumber = playerInput.getYRaw();
+		firstNumber ^= secondNumber;
+		return firstNumber % (max+1);
+	}
+	
+	// heading: 0 = 0, 1 = Y+, 2 = X+, 3 = Y-, 4 = X-
+	bool movePlayer(int x, int y){ // needs cleanup!
+		int newCoordinateX = playerCoordinate.x + x;
+		int newCoordinateY = playerCoordinate.y + y;
+		if(walls[newCoordinateX][newCoordinateY].isWall){
+			return false;
+		}
+		if(newCoordinateX >= originX + matrix.getSizeX()){
+			matrix.setLedValue(1, playerCoordinate.x % matrix.getSizeX(), playerCoordinate.y % matrix.getSizeY(), false);
+			originX += matrix.getSizeX();
+			playerCoordinate.updateCoordinate(newCoordinateX, newCoordinateY, false);
+			drawMaze();
+			matrix.setLedValue(1, playerCoordinate.x % matrix.getSizeX(), playerCoordinate.y % matrix.getSizeY(), true);
+		}else if(newCoordinateX < originX){
+			matrix.setLedValue(1, playerCoordinate.x % matrix.getSizeX(), playerCoordinate.y % matrix.getSizeY(), false);
+			originX -= matrix.getSizeX();
+			playerCoordinate.updateCoordinate(newCoordinateX, newCoordinateY, false);
+			drawMaze();
+			matrix.setLedValue(1, playerCoordinate.x % matrix.getSizeX(), playerCoordinate.y % matrix.getSizeY(), true);
+		}else if(newCoordinateY >= originY + matrix.getSizeY()){
+			matrix.setLedValue(1, playerCoordinate.x % matrix.getSizeX(), playerCoordinate.y % matrix.getSizeY(), false);
+			originY += matrix.getSizeY();
+			playerCoordinate.updateCoordinate(newCoordinateX, newCoordinateY, false);
+			drawMaze();
+			matrix.setLedValue(1, playerCoordinate.x % matrix.getSizeX(), playerCoordinate.y % matrix.getSizeY(), true);
+		}else if(newCoordinateY < originY){
+			matrix.setLedValue(1, playerCoordinate.x % matrix.getSizeX(), playerCoordinate.y % matrix.getSizeY(), false);
+			originY -= matrix.getSizeY();
+			playerCoordinate.updateCoordinate(newCoordinateX, newCoordinateY, false);
+			drawMaze();
+			matrix.setLedValue(1, playerCoordinate.x % matrix.getSizeX(), playerCoordinate.y % matrix.getSizeY(), true);
+		}else{
+			matrix.setLedValue(1, playerCoordinate.x % matrix.getSizeX(), playerCoordinate.y % matrix.getSizeY(), false);
+			playerCoordinate.updateCoordinate(newCoordinateX, newCoordinateY, false);
+			matrix.setLedValue(1, playerCoordinate.x % matrix.getSizeX(), playerCoordinate.y % matrix.getSizeY(), true);
+		}
+		if(playerCoordinate.x == exitCoordinate.x && playerCoordinate.y == exitCoordinate.y){
+			return true;
+		}
+		return false;
+	}
+	
+	bool update(){
+		int inputX = playerInput.getX();
+		int inputY = playerInput.getY();
+		if(inputX > 5){ // player is moving X+
+			return movePlayer(1, 0);
+		}else if(inputX < -5){ // player is moving X-
+			return movePlayer(-1, 0);
+		}else if(inputY > 5){ // player is moving Y+
+			return movePlayer(0, 1);
+		}else if(inputY < -5){ // player is moving Y-
+			return movePlayer(0, -1);
+		}else{ // player is standing still
+			return false;
+		}
+	}
+	
+	void drawMaze(){
+		int maxX = (originX + 1 + matrix.getSizeX() > sizeX)? sizeX-1 : originX + matrix.getSizeX()-1; // the maximum valid x index
+		int maxY = (originY + 1 + matrix.getSizeY() > sizeY)? sizeY-1 : originY + matrix.getSizeY()-1; // the maximum valid y index
+		
+		for(int x = originX; x<=originX + matrix.getSizeX()-1; x++){
+			for(int y = originY; y<=originY + matrix.getSizeY()-1; y++){
+				if(x>maxX || y>maxY){
+					matrix.setLedValue(2, x-originX, y-originY, true);
+				}else{
+					matrix.setLedValue(2, x-originX, y-originY, walls[x][y].isWall);
+				}
+			}
+		}
+		
+		if(exitOriginX == originX && exitOriginY == originY){
+			matrix.setLedValue(1, exitCoordinate.x - exitOriginX, exitCoordinate.y - exitOriginY, true);
+		}else{
+			matrix.setLedValue(1, exitCoordinate.x - exitOriginX, exitCoordinate.y - exitOriginY, false);
+		}
+	}
+	
 public:
-	lightningMaze(rgb2088_5 _matrix, joyStick _playerInput): matrix(_matrix), playerInput(_playerInput), playerCoordinate(1,1,false), originX(0), originY(0), exitOriginX(0), exitOriginY(0){
+	/// \brief
+	/// lightingMaze constructor
+	/// \details
+	/// This constructor constructs a lightningMaze class from a rgb2088_5 matrix and a joystick. The template parameters sizeX and sizeY determine the size of the maze.
+	lightningMaze(ILedMatrix & _matrix, joyStick _playerInput): matrix(_matrix), playerInput(_playerInput), playerCoordinate(1,1,false), originX(0), originY(0), exitOriginX(0), exitOriginY(0){
 		for(int x = 0; x<sizeX; x++){
 			for(int y = 0; y<sizeY; y++){
 				//walls[x][y].x = x;
@@ -40,17 +144,11 @@ public:
 		}
 	}
 	
-	void setWall(int x, int y, bool wall){
-		walls[x][y].updateIsWall(wall);
-	}
-	
-	int kindOfRandomNumber(int max){
-		int firstNumber = playerInput.getXRaw();
-		int secondNumber = playerInput.getYRaw();
-		firstNumber ^= secondNumber;
-		return firstNumber % (max+1);
-	}
-	
+	/// \brief
+	/// generateWalls function
+	/// \details
+	/// This function generates the maze that the lightingMaze will use. This function is meant to be only called once,
+	/// and it is not recommended to call it more than once as this would take time. Although, calling it multiple times shouldn't do anything destructive.
 	void generateWalls(){
 		for(int borderX=0; borderX<sizeX; borderX++){
 			setWall(borderX, 0, true);
@@ -60,7 +158,6 @@ public:
 			setWall(0,borderY,true);
 			setWall(sizeX-1,borderY,true);
 		}
-		
 		
 		mazeCoordinate neighbours[4];
 		int amountUndefined = (sizeX-2) * (sizeY-2) - 1;
@@ -176,85 +273,11 @@ public:
 		
 	}
 	
-	// heading: 0 = 0, 1 = Y+, 2 = X+, 3 = Y-, 4 = X-
-	bool movePlayer(int x, int y){ // needs cleanup!
-		int newCoordinateX = playerCoordinate.x + x;
-		int newCoordinateY = playerCoordinate.y + y;
-		if(walls[newCoordinateX][newCoordinateY].isWall){
-			return false;
-		}
-		if(newCoordinateX >= originX + matrix.getSizeX()){
-			matrix.setLedValue(1, playerCoordinate.x % matrix.getSizeX(), playerCoordinate.y % matrix.getSizeY(), false);
-			originX += matrix.getSizeX();
-			playerCoordinate.updateCoordinate(newCoordinateX, newCoordinateY, false);
-			drawMaze();
-			matrix.setLedValue(1, playerCoordinate.x % matrix.getSizeX(), playerCoordinate.y % matrix.getSizeY(), true);
-		}else if(newCoordinateX < originX){
-			matrix.setLedValue(1, playerCoordinate.x % matrix.getSizeX(), playerCoordinate.y % matrix.getSizeY(), false);
-			originX -= matrix.getSizeX();
-			playerCoordinate.updateCoordinate(newCoordinateX, newCoordinateY, false);
-			drawMaze();
-			matrix.setLedValue(1, playerCoordinate.x % matrix.getSizeX(), playerCoordinate.y % matrix.getSizeY(), true);
-		}else if(newCoordinateY >= originY + matrix.getSizeY()){
-			matrix.setLedValue(1, playerCoordinate.x % matrix.getSizeX(), playerCoordinate.y % matrix.getSizeY(), false);
-			originY += matrix.getSizeY();
-			playerCoordinate.updateCoordinate(newCoordinateX, newCoordinateY, false);
-			drawMaze();
-			matrix.setLedValue(1, playerCoordinate.x % matrix.getSizeX(), playerCoordinate.y % matrix.getSizeY(), true);
-		}else if(newCoordinateY < originY){
-			matrix.setLedValue(1, playerCoordinate.x % matrix.getSizeX(), playerCoordinate.y % matrix.getSizeY(), false);
-			originY -= matrix.getSizeY();
-			playerCoordinate.updateCoordinate(newCoordinateX, newCoordinateY, false);
-			drawMaze();
-			matrix.setLedValue(1, playerCoordinate.x % matrix.getSizeX(), playerCoordinate.y % matrix.getSizeY(), true);
-		}else{
-			matrix.setLedValue(1, playerCoordinate.x % matrix.getSizeX(), playerCoordinate.y % matrix.getSizeY(), false);
-			playerCoordinate.updateCoordinate(newCoordinateX, newCoordinateY, false);
-			matrix.setLedValue(1, playerCoordinate.x % matrix.getSizeX(), playerCoordinate.y % matrix.getSizeY(), true);
-		}
-		if(playerCoordinate.x == exitCoordinate.x && playerCoordinate.y == exitCoordinate.y){
-			return true;
-		}
-		return false;
-	}
-	
-	bool update(){
-		int inputX = playerInput.getX();
-		int inputY = playerInput.getY();
-		if(inputX > 5){ // player is moving X+
-			return movePlayer(1, 0);
-		}else if(inputX < -5){ // player is moving X-
-			return movePlayer(-1, 0);
-		}else if(inputY > 5){ // player is moving Y+
-			return movePlayer(0, 1);
-		}else if(inputY < -5){ // player is moving Y-
-			return movePlayer(0, -1);
-		}else{ // player is standing still
-			return false;
-		}
-	}
-	
-	void drawMaze(){
-		int maxX = (originX + 1 + matrix.getSizeX() > sizeX)? sizeX-1 : originX + matrix.getSizeX()-1; // the maximum valid x index
-		int maxY = (originY + 1 + matrix.getSizeY() > sizeY)? sizeY-1 : originY + matrix.getSizeY()-1; // the maximum valid y index
-		
-		for(int x = originX; x<=originX + matrix.getSizeX()-1; x++){
-			for(int y = originY; y<=originY + matrix.getSizeY()-1; y++){
-				if(x>maxX || y>maxY){
-					matrix.setLedValue(2, x-originX, y-originY, true);
-				}else{
-					matrix.setLedValue(2, x-originX, y-originY, walls[x][y].isWall);
-				}
-			}
-		}
-		
-		if(exitOriginX == originX && exitOriginY == originY){
-			matrix.setLedValue(1, exitCoordinate.x - exitOriginX, exitCoordinate.y - exitOriginY, true);
-		}else{
-			matrix.setLedValue(1, exitCoordinate.x - exitOriginX, exitCoordinate.y - exitOriginY, false);
-		}
-	}
-	
+	/// \brief
+	/// start function
+	/// \details
+	/// This function starts the game and uses a loop which is only broken when the player wins.
+	/// It is expected that the generateWalls() function is called before this one.
 	void start(){
 		// initialize
 		

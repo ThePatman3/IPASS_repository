@@ -6,6 +6,7 @@
 #include "mazeCoordinate.hpp"
 #include "adc_pins.hpp"
 #include "joyStick.hpp"
+#include "ILedMatrix.hpp"
 
 int main(){
 	
