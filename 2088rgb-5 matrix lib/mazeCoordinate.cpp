@@ -4,6 +4,8 @@
 
 #include "mazeCoordinate.hpp"
 
+namespace lightMaze{
+
 void mazeCoordinate::updateCoordinate(int _x, int _y, bool _isWall){
 	x = _x;
 	y = _y;
@@ -15,3 +17,5 @@ void mazeCoordinate::updateIsWall(bool _isWall){
 	isWall = _isWall;
 	isUndefined = false;
 }
+
+} // lightMaze

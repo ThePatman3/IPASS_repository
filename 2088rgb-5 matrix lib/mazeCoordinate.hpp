@@ -7,6 +7,8 @@
 
 /// @file
 
+namespace lightMaze{
+
 /// \brief
 /// mazeCoordinate struct
 /// \details
@@ -61,5 +63,7 @@ struct mazeCoordinate{
 	/// Function to update the isWall flag of this coordinate. Because the isWall flag is updated, the isUndefined variable is set to false. 
 	void updateIsWall(bool _isWall);
 };
+
+} // lightMaze
 
 #endif

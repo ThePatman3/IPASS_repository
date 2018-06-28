@@ -5,12 +5,16 @@
 
 /// @file
 
+namespace lmtlib{
+
 /// \brief
 /// class for an hc595 shift register
 /// \details
-/// This class can be used to control an hc595.
-/// The hc595 is an 8-bit serial input, parallel output shift register.
+/// Class to represent an hc595, which is an 8-bit serial input, parallel output shift register.
 /// It has separate clocks for the shift register and the storage register and has a serial output for cascading.
+/// This class has a writeData() function to write a byte to the hc595, a shiftData() function to shift all data one place to the Qh,
+/// a clear() function to clear the data, a enableOutput() function to enable and disable the output
+/// and lastly a function that returns the data currently stored on the hc595.
 class hc595{
 private:
 	hwlib::pin_out & SI;
@@ -64,5 +68,7 @@ public:
 	/// This function returns the data that is currently being stored in the hc595.
 	uint_fast8_t get_currentData();
 };
+
+} // lmtlib
 
 #endif

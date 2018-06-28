@@ -2,6 +2,8 @@
 
 #include "adc_pins.hpp"
 
+namespace lmtlib{
+
 void adc_pins::enableChannel(int channel){
 	enabledChannels |= (1 << channel);
 	ADC -> ADC_CHER = enabledChannels;
@@ -59,3 +61,5 @@ int adc_pins::getResult(int channel){
 uint_fast16_t adc_pins::getEnabledChannels(){
 	return enabledChannels;
 }
+
+} // lmtlib

@@ -10,6 +10,8 @@
 
 /// @file
 
+namespace lightMaze{
+
 /// \brief
 /// lightningMaze Game
 /// \details
@@ -20,9 +22,9 @@
 template<int sizeX, int sizeY>
 class lightningMaze{
 private:
-	ILedMatrix & matrix;
+	lmtlib::ILedMatrix & matrix;
 	mazeCoordinate walls[sizeX][sizeY];
-	joyStick & playerInput;
+	jstlib::joyStick & playerInput;
 	mazeCoordinate playerCoordinate;
 	mazeCoordinate exitCoordinate;
 	int originX;
@@ -125,7 +127,7 @@ public:
 	/// lightingMaze constructor
 	/// \details
 	/// This constructor constructs a lightningMaze class from a rgb2088_5 matrix and a joystick. The template parameters sizeX and sizeY determine the size of the maze.
-	lightningMaze(ILedMatrix & _matrix, joyStick _playerInput): matrix(_matrix), playerInput(_playerInput), playerCoordinate(1,1,false), originX(0), originY(0), exitOriginX(0), exitOriginY(0){
+	lightningMaze(lmtlib::ILedMatrix & _matrix, jstlib::joyStick & _playerInput): matrix(_matrix), playerInput(_playerInput), playerCoordinate(1,1,false), originX(0), originY(0), exitOriginX(0), exitOriginY(0){
 		for(int x = 0; x<sizeX; x++){
 			for(int y = 0; y<sizeY; y++){
 				//walls[x][y].x = x;
@@ -175,12 +177,12 @@ public:
 			}
 			foundNewCoordinate = false;
 			deadEnd = true;
-			if(currentCoordinate.y + 1 <= sizeY -2){
+			if(currentCoordinate.y + 1 <= sizeY -1){
 				neighbours[0] = walls[currentCoordinate.x][currentCoordinate.y+1]; // top neighbour
 			}else{
 				neighbours[0] = walls[playerCoordinate.x][playerCoordinate.y];
 			}
-			if(currentCoordinate.x + 1 <= sizeX -2){
+			if(currentCoordinate.x + 1 <= sizeX -1){
 				neighbours[1] = walls[currentCoordinate.x + 1][currentCoordinate.y]; // right neighbour
 			}else{
 				neighbours[1] = walls[playerCoordinate.x][playerCoordinate.y];
@@ -304,5 +306,7 @@ public:
 		}
 	}
 };
+
+} //lightMaze
 
 #endif

@@ -4,6 +4,13 @@
 #include "hwlib.hpp"
 #include "sam.h"
 
+namespace lmtlib{
+
+/// \brief
+/// Class to represent the adc pins on a arduino due, this class is currently not working.
+/// \details
+/// When working, this class represents all adc pins on the arduino due. One can convert analog data using the startConversion() function, 
+/// and read this data using the getResult() function. One can also enable and disable channels using the enableChannel() and disableChannel() functions respectively.
 class adc_pins{
 private:
 	uint_fast16_t enabledChannels; // variable to store which channels are enabled
@@ -31,5 +38,7 @@ public:
 	
 	uint_fast16_t getEnabledChannels();
 };
+
+} // lmtlib
 
 #endif

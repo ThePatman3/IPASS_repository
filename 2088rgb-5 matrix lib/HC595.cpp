@@ -1,6 +1,8 @@
 #include "hwlib.hpp"
 #include "HC595.hpp"
 
+namespace lmtlib{
+
 hc595::hc595(hwlib::pin_out & _SI, hwlib::pin_out & _SCK, hwlib::pin_out & _RCK, hwlib::pin_out & _SCLR, hwlib::pin_out & _G):
 	SI(_SI), SCK(_SCK), RCK(_RCK), SCLR(_SCLR), G(_G), waitTime_us(1), currentData(0)
 	{
@@ -71,3 +73,5 @@ void hc595::enableOutput(bool enable){
 uint_fast8_t hc595::get_currentData(){
 	return currentData;
 }
+
+} // lmtlib

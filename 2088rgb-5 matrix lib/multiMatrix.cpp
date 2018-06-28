@@ -54,16 +54,6 @@ void rgb2088_5::setLedValue(int color, int x, int y, bool value){
 	}
 }
 
-void rgb2088_5::clear(){
-	for(int color = 0; color<3; color++){
-		for(int x = 0; x<8; x++){
-			for(int y=0; y<8; y++){
-				setLedValue(color, x, y, false);
-			}
-		}
-	}
-}
-
 void rgb2088_5::lightMatrix(int_fast32_t waitTime_ns){
 	int waitTime_us = waitTime_ns/1000;
 	bool wait = false;

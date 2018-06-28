@@ -8,10 +8,14 @@
 
 /// @file
 
+namespace lmtlib{
+
 /// \brief
 /// rgb2088_5 class
 /// \details
 /// Class to represent a rgb2088_5 8x8 common anode rgb-led matrix. This class uses four hc595s' to control the leds on the matrix. This class inherits from ILedMatrix.
+/// With this class, one can turn individual leds on and off using the setLedValue() function, can turn off all leds on the matrix using the clear() function,
+/// can request the size of the matrix of both the x and y axis using the getSizeX() and getSizeY() functions respectively. To use the matrix, the lightMatrix() function is used.
 class rgb2088_5 : public ILedMatrix{
 private:
 	hc595 & anodeController;
@@ -51,9 +55,15 @@ public:
 	void setLedValue(int color, int x, int y, bool value);
 	
 	/// \brief
+	/// clear function
+	/// \details
+	/// This function is used to turn off all leds on the matrix
+	void clear();
+	
+	/// \brief
 	/// lightMatrix function
 	/// \details
-	/// This function is used to turn on the matrix for one iteration. the int waitTime_ns is the amount of time that is waited between the activation between each row, this value cannot be below 1000ns
+	/// This function is used to turn on the matrix for one iteration. The int waitTime_ns is the amount of time that is waited between the activation between each row, this value cannot be below 1000ns
 	/// This function has been successfully tested using a 700000ns waitTime
 	void lightMatrix(int waitTime_ns); // Successfully tested with a 700000ns waitTime
 	
@@ -69,5 +79,7 @@ public:
 	/// This function returns the size of the matrix on the y-axis
 	int getSizeY();
 };
+
+} // lmtlib
 
 #endif

@@ -3,6 +3,8 @@
 
 /// @file
 
+namespace lmtlib{
+
 /// \brief
 /// ILedMatrix interface/abstract class
 /// \details
@@ -22,6 +24,12 @@ public:
 	virtual void setLedValue(int color, int x, int y, bool value) = 0;
 	
 	/// \brief
+	/// clear function
+	/// \details
+	/// This function is used to turn off all leds on the matrix
+	virtual void clear() = 0;
+	
+	/// \brief
 	/// lightMatrix function
 	/// \details
 	/// This function is used to turn on the matrix for one iteration. the int waitTime_ns is the amount of time that is waited between the activation between each row.
@@ -39,5 +47,7 @@ public:
 	/// This function returns the size of the matrix on the y-axis
 	virtual int getSizeY() = 0;
 };
+
+} // lmtlib
 
 #endif

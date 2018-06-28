@@ -2,6 +2,8 @@
 
 #include "joyStick.hpp"
 
+namespace jstlib{
+
 int joyStick::getX(){
 	int pinXValue = static_cast<int>(pinX.get());
 	if(pinXValue < 1900){
@@ -40,3 +42,5 @@ int joyStick::getXRaw(){
 int joyStick::getYRaw(){
 	return static_cast<int>(pinY.get());
 }
+
+} // jstlib

@@ -5,6 +5,8 @@
 
 /// @file
 
+namespace lmtlib{
+
 /// \brief
 /// class to represent a led
 /// \details
@@ -53,5 +55,7 @@ public:
 		{}
 	
 };
+
+} // lmtlib
 
 #endif
