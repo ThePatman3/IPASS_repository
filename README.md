@@ -5,7 +5,7 @@ This repository also contains a library for the 2088rgb-5 led matrix, in conjunc
 
 ## requirements
 
-This is programmed using * [hwlib](https://github.com/wovo/hwlib) and needs this in order to run properly.
+This is programmed using [hwlib](https://github.com/wovo/hwlib) and needs this in order to run properly.
 
 ## License
 
