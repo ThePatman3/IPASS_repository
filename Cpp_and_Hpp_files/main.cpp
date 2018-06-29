@@ -1,12 +1,8 @@
 #include "hwlib.hpp"
 #include "HC595.hpp"
 #include "2088rgb_5.hpp"
-#include "led.hpp"
 #include "lightningMaze.hpp"
-#include "mazeCoordinate.hpp"
-#include "adc_pins.hpp"
 #include "joyStick.hpp"
-#include "ILedMatrix.hpp"
 #include "multiMatrix.hpp"
 
 int main(){
@@ -41,7 +37,7 @@ int main(){
 	lmtlib::hc595 dummyController = lmtlib::hc595(hwlib::pin_out_dummy, hwlib::pin_out_dummy, hwlib::pin_out_dummy, hwlib::pin_out_dummy);
 	
 	lmtlib::rgb2088_5 matrix = lmtlib::rgb2088_5(anodeController, dummyController, greenController, blueController);
-
+	
 	// joyStick setup
 	hwlib::target::pin_adc adcPin0(hwlib::target::ad_pins::a0);
 	hwlib::target::pin_adc adcPin1(hwlib::target::ad_pins::a1);

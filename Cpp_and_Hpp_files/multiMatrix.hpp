@@ -114,7 +114,7 @@ public:
 	int getSizeY(){
 		int finalSize = 0;
 		for(int y = 0; y<amountY; y++){
-			if(matrixPresent[y][0]){
+			if(matrixPresent[0][y]){
 				finalSize += singleMatrixSizeY;
 			}
 		}
